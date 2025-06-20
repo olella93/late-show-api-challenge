@@ -1,4 +1,4 @@
-from server.config import db
+from server.extensions import db
 from sqlalchemy.orm import validates
 
 class Appearance(db.Model):

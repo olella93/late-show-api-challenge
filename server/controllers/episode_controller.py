@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required
 from server.models.episode import Episode
 from server.extensions import db
 
@@ -54,3 +55,14 @@ def get_episode_by_id(id):
         "air_date": episode.air_date.strftime("%Y-%m-%d"),
         "appearances": appearances_data
     }), 200
+
+@episode_bp.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_episode(id):
+    episode = Episode.query.get(id)
+    if not episode:
+        return jsonify(error="Episode not found"), 404
+
+    db.session.delete(episode)
+    db.session.commit()
+    return jsonify(message=f"Episode {id} and its appearances deleted."), 200

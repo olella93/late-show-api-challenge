@@ -1,18 +1,30 @@
 from flask import Blueprint, request, jsonify
 from server.models.episode import Episode
-from server.models import db
+from server.extensions import db
 
 episode_bp = Blueprint('episode_bp', __name__, url_prefix='/episodes')
 
 @episode_bp.route('/', methods=['GET'])
 def get_episodes():
     episodes = Episode.query.all()
-    return jsonify([episode.to_dict() for episode in episodes]), 200
+    episodes_list = [
+        {
+            "id": episode.id,
+            "title": episode.title,
+            "air_date": episode.air_date.strftime("%Y-%m-%d")
+        }
+        for episode in episodes
+    ]
+    return jsonify(episodes_list), 200
 
 @episode_bp.route('/', methods=['POST'])
 def create_episode():
     data = request.get_json()
-    new_episode = Episode(date=data['date'], title=data['title'])
+    new_episode = Episode(title=data['title'], air_date=data['air_date'])
     db.session.add(new_episode)
     db.session.commit()
-    return jsonify(new_episode.to_dict()), 201
+    return jsonify({
+        "id": new_episode.id,
+        "title": new_episode.title,
+        "air_date": new_episode.air_date.strftime("%Y-%m-%d")
+    }), 201

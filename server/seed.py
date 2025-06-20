@@ -29,8 +29,8 @@ with app.app_context():
     episode2 = Episode(title="Episode 2", air_date="2024-05-08")
 
     # Seed Appearances
-    appearance1 = Appearance(guest=guest1, episode=episode1)
-    appearance2 = Appearance(guest=guest2, episode=episode2)
+    appearance1 = Appearance(guest=guest1, episode=episode1, rating=5)
+    appearance2 = Appearance(guest=guest2, episode=episode2, rating=4)
 
     # Add all to session
     db.session.add_all([user1, guest1, guest2, episode1, episode2, appearance1, appearance2])

@@ -1,7 +1,17 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
+from server.models.guest import Guest
 
-guest_bp = Blueprint('guest_bp', __name__)
+guest_bp = Blueprint('guest_bp', __name__, url_prefix='/guests')
 
-@guest_bp.route("/guests", methods=["GET"])
+@guest_bp.route('/', methods=['GET'])
 def get_guests():
-    return {"message": "Placeholder route for guests"}
+    guests = Guest.query.all()
+    guests_data = [
+        {
+            "id": guest.id,
+            "name": guest.name,
+            "occupation": guest.occupation
+        }
+        for guest in guests
+    ]
+    return jsonify(guests_data), 200
